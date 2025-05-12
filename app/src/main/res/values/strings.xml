@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Lab22</string>
+    <string name="app_title">Игра "Найди точку"</string>
+    <string name="distance">Текущее расстояние до точки: %.1f м</string>
+    <string name="distance_init">Текущее расстояние до точки неопределенно</string>
+    <string name="btn_open_settings">Открыть настройки программы</string>
+    <string name="btn_new_point">Загадать новую точку</string>
+    <string name="game_status_in_progress">Точка загадана, ищите!</string>
+    <string name="game_status_finished">Вы победили!!!!</string>
+    <string name="toast_notification_permission">Нужно разрешение</string>
+    <string name="point_init_notification">Точка загадана</string>
+    <string name="win_notification">Вы победили</string>
 </resources>
