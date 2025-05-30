@@ -3,6 +3,7 @@ package ru.alexeyivannikov.lab22
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -41,8 +42,6 @@ class MainActivity : AppCompatActivity() {
 
     private val locationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
-
-
             if (startPoint == null) {
                 startPoint = generatePoint(location)
             }
@@ -50,10 +49,7 @@ class MainActivity : AppCompatActivity() {
                 val curPoint = Coordinates(location.latitude, location.longitude)
                 updateGameState(curPoint, it)
             }
-
-
         }
-
     }
 
     private var locationManager: LocationManager? = null
@@ -129,24 +125,26 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun initGame() {
+        startPoint = null
+        resetGameState()
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         Log.d("LOC_TAG", locationManager.toString())
         locationManager?.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             1000,
-            0.001f,
+            0.1f,
             locationListener
         )
 
         binding.tvGameStatus.visibility = View.VISIBLE
         binding.tvDistance.visibility = View.VISIBLE
         binding.tvGameStatus.text = resources.getText(R.string.game_status_in_progress)
-
+        binding.tvGameStatus.setTextColor(resources.getColor(android.R.color.holo_blue_bright))
     }
 
     private fun generatePoint(beginningLocation: Location): Coordinates {
-        val D = 0.04
-        var x = Random.nextFloat() * 0.04
+        val D = 0.02
+        var x = Random.nextFloat() * D
         if (Random.nextBoolean()) {
             x *= -1
         }
@@ -157,6 +155,12 @@ class MainActivity : AppCompatActivity() {
         val coordinates =
             Coordinates(beginningLocation.latitude + x, beginningLocation.longitude + y)
         return coordinates
+    }
+
+    private fun resetGameState() {
+        binding.tvGameStatus.text = resources.getText(R.string.game_status_in_progress)
+        binding.tvDistance.text = resources.getText(R.string.distance_init)
+        binding.tvGameStatus.setTextColor(resources.getColor(android.R.color.holo_blue_bright))
     }
 
     private fun updateGameState(curPoint: Coordinates, targetPoint: Coordinates) {
@@ -183,15 +187,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun finishGame() {
         binding.tvGameStatus.text = resources.getText(R.string.game_status_finished)
+        binding.tvGameStatus.setTextColor(Color.GREEN)
         Toast.makeText(this, getString(R.string.win_notification), Toast.LENGTH_SHORT).show()
 
     }
 
-
-    override fun onStop() {
-        super.onStop()
-        locationManager?.removeUpdates(locationListener)
-    }
 
     private data class Coordinates(val x: Double, val y: Double)
 }
